@@ -1,4 +1,4 @@
-from Lab1.Client_Service import ClientServer, TownChisinau
+import ClientServer, TownChisinau
 
 municipiu = TownChisinau.Chisinau()
 
