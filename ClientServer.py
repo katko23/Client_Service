@@ -1,7 +1,7 @@
 from threading import Thread
 import threading
 from flask import Flask, render_template, request, url_for, jsonify
-import TownChisinau
+import Menu
 import Setings
 
 hostName = Setings.serverName
@@ -45,10 +45,20 @@ class Server(Thread):
             for r in tempr:
                 dict = { 'restaurant_id':r['restaurant_id'], 'menu':r['menu'] , 'nr_of_items':r['menu_items']}
                 Menu.menu.append(dict);
-
+                Setings.restaurant_rating.append(0)
             serverLock.release()
             print("Menu is ", Menu.menu)
             dictToReturn = {'Answer': "Client received"}
+            return jsonify(dictToReturn)
+
+        @app.route('/v2/order', methods=['POST'])
+        def client_info_endpoint():
+            input_json = request.get_json(force=True)
+            # force=True, above, is necessary if another developer
+            # forgot to set the MIME type to 'application/json'
+            print('data from Ordering Service:', input_json)
+            Menu.clients_list.append(input_json['estimated_waiting_time'])
+            dictToReturn = {'answer': "Client received"}
             return jsonify(dictToReturn)
 
         app.run(host=hostName, port=serverPort, debug=False)
